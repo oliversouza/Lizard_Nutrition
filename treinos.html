@@ -1,0 +1,27 @@
+<h1 class="titulos">Cronograma de Treinos</h1>
+<br>
+<div>
+    <label for="workoutName">Nome do Treino:</label>
+    <input type="text" id="workoutName" placeholder="Ex: Segunda-feira (triceps)">
+</div>
+
+<h3>Exercícios:</h3>
+<div class="container-green">
+    <div id="exercisesContainer">
+        <!-- Os exercícios serão inseridos dinamicamente aqui -->
+        <div class="exercise-input">
+            <input type="text" placeholder="Nome do exercício" class="exercise-name">
+            <input type="number" class="series-reps" placeholder="Séries" min="1">
+            <input type="number" class="series-reps" placeholder="Repetições" min="1">
+            <button class="remove-exercise remove">Remover</button>
+        </div>
+    </div>
+</div>
+
+<button class="add-exercise" id="addExercise">Adicionar Novo Exercício</button>
+<button class="save-button" id="saveWorkout">Salvar Treino</button>
+
+<div class="trainings-list">
+    <h3>Treinos Registrados:</h3>
+    <div id="registeredWorkouts"></div>
+</div>

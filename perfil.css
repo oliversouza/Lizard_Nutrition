@@ -1,0 +1,45 @@
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.data-item {
+    align-items: center;
+    justify-content: center;
+}
+
+.data-item label {
+    flex: 1;
+    display: block;
+}
+
+.box-perfil {
+    margin-top: 30px;
+    background-color: #144fc6;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.box-perfil h2 {
+    margin-bottom: 20px;
+}
+
+.box-perfil p {
+    font-size: 18px;
+}
+
+.input-perfil{
+    width: 40%;
+}
+
+.data-item-container{
+    background-color: none;
+    border: 2px solid var(--primary-color);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+}

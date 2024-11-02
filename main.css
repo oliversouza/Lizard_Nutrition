@@ -1,0 +1,184 @@
+:root {
+    --primary-color: #46685b;
+    --secondary-color: #46685b;
+    --tertiary-color: #648a64;
+    --quaternary-color: #1e1e1e;
+    --background-color: #213435;
+    --text-color: #e2e2e2;
+    --button-color: #a6b985;
+    --button-reset-color: #a31212;
+    --color-agua: rgb(18, 154, 245);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #141414;
+}
+
+/* Remover setas */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input {
+    padding: 10px 20px 10px 20px;
+    margin: 5px;
+    width: 200px;
+    border: 2px solid var(--tertiary-color);
+    border-radius: 5px;
+    background-color: var(--quaternary-color);
+    color: #FFF
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: var(--tertiary-color);
+}
+
+/* #addWater {
+    background-color: #0f3a8a;
+} */
+
+.remove {
+    background-color: var(--button-reset-color);
+}
+
+#waterInput, #goal {
+    width: 215px;
+    text-align: center;
+    color: #FFF
+}
+
+.titulos{
+    color: var(--text-color);
+}
+.container-green{
+    width: 80%;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px 10px 20px 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* Adiciona a sombra */
+}
+.navbar {
+    background-color: #46685b;
+    padding: 10px 0;
+    text-align: right;
+}
+
+.navbar ul {
+    list-style: none;
+}
+
+.navbar ul li {
+    display: inline-block;
+    margin: 0 15px;
+}
+
+#buttonswater {
+    display: inline-block;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    background-color: var(--primary-color);
+}
+
+.navbar ul li a.active {
+    background-color: var(--tertiary-color);
+}
+
+.content {
+    margin-top: 30px;
+    text-align: center;
+    color: #FFF;
+}
+
+/* Media Queries */
+@media only screen and (max-width: 768px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    main {
+        flex: 1;
+        padding-bottom: 60px; /* Reserva espaço na parte inferior para a navbar */
+    }
+
+    .navbar {
+        width: 100%;
+        height: 60px; /* Altura da navbar */
+        background-color: var(--quaternary-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0; /* Garante que a navbar fique fixa na parte inferior e na largura total */
+    }
+
+    .navbar ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: row; /* Organiza os itens horizontalmente */
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
+    }
+
+    .navbar ul li {
+        margin: 0;
+    }
+
+    .navbar ul li a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        background-color: none;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar ul li a:hover {
+        background-color: var(--primary-color);
+    }
+
+    .content {
+        margin-top: 30px;
+        text-align: center;
+        color: #FFF;
+        padding-bottom: 60px; /* Espaço para garantir que o conteúdo não seja escondido pela navbar */
+    }
+}

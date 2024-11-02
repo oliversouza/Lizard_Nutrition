@@ -1,0 +1,100 @@
+.input-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px; /* Largura máxima para a linha */
+    margin-bottom: 10px; /* Espaçamento entre as linhas */
+}
+
+.col {
+    flex: 1; /* Faz com que as colunas se expandam igualmente */
+    margin: 0 5px; /* Espaçamento entre as colunas */
+}
+
+.col input {
+    width: 100%; /* Faz com que o input preencha completamente a coluna */
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+label {
+    margin: 10px 0 5px;
+}
+
+.totals {
+    margin-top: 20px;
+}
+
+#mealSummary {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.chart-section {
+    margin-top: 20px;
+    width: 200px;
+}
+
+.col input{
+    text-align: center;
+    margin-left: 0;
+}
+
+.resume-section{
+    background-color: var(--tertiary-color);
+    color: #fff;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.total-section{
+    background-color: var(--secondary-color);
+    color: #fff;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.remove-exercise {
+    margin-top: 10px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: darkred;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.remove-exercise:hover {
+    background-color: darkred; /* Para um efeito de hover */
+}
+
+.trainings-list{
+    margin: 10px;
+    padding: 10px;
+}
+
+.training-item{
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    background-color: var(--secondary-color);
+}
+
+#registered-trainings{
+    background-color: var(--background-color);
+    padding-bottom: 10px;
+    padding-top: 3px;
+    border-radius: 5px;
+}

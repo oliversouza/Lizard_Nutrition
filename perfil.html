@@ -1,0 +1,38 @@
+<div class="profile-container">
+    <h1>Seus Dados</h1>
+    <div class="data-item-container">
+    <div class="data-item">
+        <label for="name">Nome:</label>
+        <input class="input-perfil" type="text" id="name" value="Seu Nome" disabled>
+        <button class="edit-btn" onclick="enableEdit('name')">Editar</button>
+    </div>
+
+    <div class="data-item">
+        <label for="age">Idade:</label>
+        <input class="input-perfil" type="number" id="age" value="25" disabled>
+        <button class="edit-btn" onclick="enableEdit('age')">Editar</button>
+    </div>
+
+    <div class="data-item">
+        <label for="height">Altura (cm):</label>
+        <input class="input-perfil" type="number" id="height" value="170" disabled>
+        <button class="edit-btn" onclick="enableEdit('height')">Editar</button>
+    </div>
+
+    <div class="data-item">
+        <label for="weight">Peso (kg):</label>
+        <input class="input-perfil" type="number" id="weight" value="70" disabled>
+        <button class="edit-btn" onclick="enableEdit('weight')">Editar</button>
+    </div>
+
+    <div class="data-item">
+        <button onclick="saveData()">Salvar Alterações</button>
+    </div>
+</div>
+    <div class="box total-section">
+        <h2>Dados Físicos</h2>
+        <p>IMC: <span id="imcValue">-</span></p>
+        <p>Faixa de IMC: <span id="imcCategory">-</span></p>
+        <!-- Outros dados relevantes podem ser adicionados aqui -->
+    </div>
+</div>

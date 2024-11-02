@@ -1,0 +1,61 @@
+<h1 class="titulos">Controle de Dieta</h1>
+<div class="input-section">
+    <div class="row">
+        <div class="col">
+            <label for="food">Alimento:</label>
+            <input type="text" id="food" placeholder="Nome" />
+        </div>
+        <div class="col">
+            <label for="proteinas">Proteínas (g):</label>
+            <input type="number" id="proteinas" placeholder="Quantidade" />
+        </div>
+        <div class="col">
+            <label for="calorias">Calorias (kcal):</label>
+            <input type="number" id="calorias" placeholder="Quantidade" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <label for="gordura">Gordura (g):</label>
+            <input type="number" id="gordura" placeholder="Quantidade" />
+        </div>
+        <div class="col">
+            <label for="carboidratos">Carboidratos (g):</label>
+            <input type="number" id="carboidratos" placeholder="Quantidade" />
+        </div>
+        <div class="col">
+            <label for="custo">Custo (R$):</label>
+            <input type="number" id="custo" placeholder="Valor" />
+        </div>
+    </div>
+    <div class="button-container">
+        <button id="addMeal">Adicionar Alimento</button>
+        <button id="dicasAlimentos">Dicas de Alimentos</button>
+    </div>
+
+    <!-- Estrutura do modal para Dicas de Alimentos -->
+    <div id="foodModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Dicas de Alimentos</h2>
+            <div id="foodList">
+                <!-- Lista de alimentos com ícones e nomes -->
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="total-section">
+    <h2>Total Diário</h2>
+    <div class="totals">
+        <p>Proteínas: <span id="totalProteinas">0</span> g</p>
+        <p>Calorias: <span id="totalCalorias">0</span> kcal</p>
+        <p>Gorduras: <span id="totalGordura">0</span> g</p>
+        <p>Carboidratos: <span id="totalCarboidratos">0</span> g</p>
+        <p>Custo Total: R$ <span id="totalCusto">0.00</span></p>
+    </div>
+</div>
+<div class="resume-section">
+    <h2>Resumo Diário</h2>
+    <div id="mealSummary"></div>
+</div>

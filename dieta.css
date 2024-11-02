@@ -1,0 +1,137 @@
+.input-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px; /* Largura máxima para a linha */
+    margin-bottom: 10px; /* Espaçamento entre as linhas */
+}
+
+.col {
+    flex: 1; /* Faz com que as colunas se expandam igualmente */
+    margin: 0 5px; /* Espaçamento entre as colunas */
+}
+
+.col input {
+    width: 100%; /* Faz com que o input preencha completamente a coluna */
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+label {
+    margin: 10px 0 5px;
+}
+
+.totals {
+    margin-top: 20px;
+}
+
+#mealSummary {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.chart-section {
+    margin-top: 20px;
+    width: 200px;
+}
+
+.col input{
+    text-align: center;
+    margin-left: 0;
+}
+
+.resume-section{
+    background-color: var(--quaternary-color);
+    color: #fff;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.total-section{
+    background-color: var(--background-color);
+    color: #fff;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Espaço entre os botões */
+}
+
+
+
+.modal {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    z-index: 1;
+    padding-top: 60px;
+    padding-bottom: 40px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+}
+
+.modal-content {
+    background-color: var(--background-color);
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.food-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+
+.food-item i {
+    font-size: 1.5em;
+}
+
+.food-item p {
+    flex: 1;
+    font-size: 1em;
+    margin: 0;
+}
+
+.gramas-input {
+    width: 100px;
+    text-align: left;
+    padding: 5px;
+}
+
+.add-btn {
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+#foodList{
+    margin-top: 20px;
+}
