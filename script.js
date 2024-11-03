@@ -1,69 +1,12 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const menuItems = document.querySelectorAll('.navbar a');
-    const content = document.querySelector('.content');
-
-    menuItems.forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            // Remove 'active' class from all menu items
-            menuItems.forEach(link => link.classList.remove('active'));
-
-            // Add 'active' class to the clicked menu item
-            this.classList.add('active');
-
-            // Obter o nome da página baseado no item clicado
-            let page = this.id; // Use o ID do item como nome do arquivo
-
-            // Carregar conteúdo do arquivo HTML correspondente
-            fetch(`${page}.html`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    content.innerHTML = data; // Atualiza o conteúdo com o HTML carregado
-
-                    // Inicializa scripts específicos com base na página carregada
-                    if (page === 'water') {
-                        initializeWaterJS(); // Chama a função para configurar o comportamento da água
-                    } 
-                    if (page === 'dieta') {
-                        initializeDietJS(); // Chama a função para configurar o comportamento da dieta
-                    } 
-                    if (page === 'calendario') {
-                        initializeCalendarioJS(); // Chama a função para configurar o comportamento do exercício
-                    }
-                    if (page === 'treinos') {
-                        initializeTreinosJS(); // Chama a função para configurar o comportamento do treino
-                    }
-                    if (page === 'perfil') {
-                        initializeProfileJS(); // Chama a função para configurar o comportamento do perfil
-                    }
-                })
-                .catch(error => {
-                    console.error('Houve um problema com a requisição fetch:', error);
-                    content.innerHTML = `<p>Erro ao carregar o conteúdo da página.</p>`;
-                });
-        });
-    });
-
-    // Carregar a página inicial automaticamente
-    const homeItem = document.getElementById("home"); // Obtenha o elemento home
-    homeItem.click(); // Simule um clique no item home
-});
-
-// Função que define a lógica do perfil.js para ser executada dinamicamente
 function initializeProfileJS() {
-    // Habilitar edição do campo quando clicar em "Editar"
+    // Carregar dados do localStorage ao iniciar
+    loadData();
+
     function enableEdit(fieldId) {
         document.getElementById(fieldId).disabled = false;
         document.getElementById(fieldId).focus();
     }
 
-    // Salvar alterações e calcular dados
     function saveData() {
         const height = parseFloat(document.getElementById("height").value) / 100; // Convertendo para metros
         const weight = parseFloat(document.getElementById("weight").value);
@@ -71,7 +14,7 @@ function initializeProfileJS() {
         // Calcula IMC
         const imc = (weight / (height * height)).toFixed(2);
         document.getElementById("imcValue").textContent = imc;
-        
+
         // Categorias de IMC
         let category = "";
         if (imc < 18.5) {
@@ -85,6 +28,14 @@ function initializeProfileJS() {
         }
         document.getElementById("imcCategory").textContent = category;
 
+        // Salvar dados no localStorage
+        localStorage.setItem('name', document.getElementById("name").value);
+        localStorage.setItem('age', document.getElementById("age").value);
+        localStorage.setItem('height', document.getElementById("height").value);
+        localStorage.setItem('weight', document.getElementById("weight").value);
+        localStorage.setItem('imcValue', imc);
+        localStorage.setItem('imcCategory', category);
+
         // Desabilita os campos de input após salvar
         document.getElementById("name").disabled = true;
         document.getElementById("age").disabled = true;
@@ -92,7 +43,16 @@ function initializeProfileJS() {
         document.getElementById("weight").disabled = true;
     }
 
-    // Adicionar eventos aos botões de editar e salvar
+    function loadData() {
+        // Carregar dados do localStorage
+        document.getElementById("name").value = localStorage.getItem('name') || 'Seu Nome';
+        document.getElementById("age").value = localStorage.getItem('age') || '25';
+        document.getElementById("height").value = localStorage.getItem('height') || '170';
+        document.getElementById("weight").value = localStorage.getItem('weight') || '70';
+        document.getElementById("imcValue").textContent = localStorage.getItem('imcValue') || '-';
+        document.getElementById("imcCategory").textContent = localStorage.getItem('imcCategory') || '-';
+    }
+
     document.querySelectorAll('.edit-btn').forEach(button => {
         button.addEventListener('click', function() {
             const fieldId = this.previousElementSibling.id;
@@ -103,7 +63,6 @@ function initializeProfileJS() {
     document.querySelector('button[onclick="saveData()"]').addEventListener('click', saveData);
 }
 
-// Função que define a lógica do water.js para ser executada dinamicamente
 function initializeWaterJS() {
     const waterInput = document.getElementById("waterInput");
     const addWaterBtn = document.getElementById("addWater");
@@ -113,14 +72,17 @@ function initializeWaterJS() {
     const remained = document.getElementById("remained");
     const goalInput = document.getElementById("goal");
 
-    let totalDrunk = 0;
-    let goal = parseInt(goalInput.value);
+    // Carregar dados do localStorage ao iniciar
+    let totalDrunk = parseInt(localStorage.getItem('totalDrunk')) || 0;
+    let goal = parseInt(localStorage.getItem('goal')) || parseInt(goalInput.value);
 
     updateCup();
 
     // Atualiza a meta quando o usuário altera o valor no input
+    goalInput.value = goal; // Define o valor da meta a partir do localStorage
     goalInput.addEventListener("input", function () {
         goal = parseInt(this.value);
+        localStorage.setItem('goal', goal); // Salva a nova meta no localStorage
         updateCup(); // Atualiza a visualização ao alterar a meta
     });
 
@@ -129,6 +91,7 @@ function initializeWaterJS() {
         const waterAmount = parseInt(waterInput.value);
         if (waterAmount > 0) {
             totalDrunk += waterAmount;
+            localStorage.setItem('totalDrunk', totalDrunk); // Salva a quantidade total consumida no localStorage
             updateCup();
         }
     });
@@ -136,6 +99,7 @@ function initializeWaterJS() {
     // Reseta a quantidade de água bebida
     resetWaterBtn.addEventListener("click", function () {
         totalDrunk = 0;
+        localStorage.setItem('totalDrunk', totalDrunk); // Reseta o valor no localStorage
         liters.innerText = ''; // Limpa a mensagem de litros
         updateCup();
     });
@@ -165,10 +129,10 @@ function initializeWaterJS() {
     }
 }
 
-// Função que define a lógica do dieta.js para ser executada dinamicamente
 function initializeDietJS() {
     const addMealBtn = document.getElementById("addMeal");
     const dicasAlimentosBtn = document.getElementById("dicasAlimentos");
+    const resetDayBtn = document.getElementById("resetDay");
     const mealSummary = document.getElementById("mealSummary");
     const totalProteinas = document.getElementById("totalProteinas");
     const totalCalorias = document.getElementById("totalCalorias");
@@ -176,13 +140,33 @@ function initializeDietJS() {
     const totalCarboidratos = document.getElementById("totalCarboidratos");
     const totalCusto = document.getElementById("totalCusto");
 
-    let dailyTotal = {
+    // Recupera dados do localStorage
+    const dailyTotal = JSON.parse(localStorage.getItem('dailyTotal')) || {
         proteinas: 0,
         calorias: 0,
         gordura: 0,
         carboidratos: 0,
         custo: 0,
     };
+
+    // Atualiza a UI com os totais recuperados
+    totalProteinas.innerText = dailyTotal.proteinas;
+    totalCalorias.innerText = dailyTotal.calorias;
+    totalGordura.innerText = dailyTotal.gordura.toFixed(2);
+    totalCarboidratos.innerText = dailyTotal.carboidratos;
+    totalCusto.innerText = dailyTotal.custo.toFixed(2);
+
+    // Restaura o resumo diário
+    const savedMeals = JSON.parse(localStorage.getItem('meals')) || [];
+    savedMeals.forEach(meal => {
+        const mealEntry = document.createElement("div");
+        mealEntry.innerHTML = `<p style="border: 1px solid var(--tertiary-color); border-radius: 8px; padding: 8px 8px;">
+            <strong style="color: var(--tertiary-color);font-size: 1.2em;">${meal.food}:</strong> 
+            <br>Proteínas: ${meal.proteinas}g, Calorias: ${meal.calorias}kcal, 
+            <br>Gordura: ${meal.gordura}g, Carboidratos: ${meal.carboidratos}g, 
+            <br><i>Custo: R$ ${meal.custo.toFixed(2)}</i></p><br>`;
+        mealSummary.appendChild(mealEntry);
+    });
 
     addMealBtn.addEventListener("click", function () {
         const food = document.getElementById("food").value.trim();
@@ -197,25 +181,61 @@ function initializeDietJS() {
             return;
         }
 
-        const mealEntry = document.createElement("div");
-        mealEntry.innerHTML = `<p style="border: 1px solid var(--tertiary-color); border-radius: 8px; padding: 8px 8px;">
-            <strong style="color: var(--tertiary-color);font-size: 1.2em;">${food}:</strong> 
-            <br>Proteínas: ${proteinas}g, Calorias: ${calorias}kcal, 
-            <br>Gordura: ${gordura}g, Carboidratos: ${carboidratos}g, 
-            <br><i>Custo: R$ ${custo.toFixed(2)}</i></p><br>`;
-        mealSummary.appendChild(mealEntry);
+        const mealEntry = {
+            food,
+            proteinas,
+            calorias,
+            gordura,
+            carboidratos,
+            custo
+        };
 
+        // Atualiza os totais
         dailyTotal.proteinas += proteinas;
         dailyTotal.calorias += calorias;
         dailyTotal.gordura += gordura;
         dailyTotal.carboidratos += carboidratos;
         dailyTotal.custo += custo;
 
+        // Salva os dados
+        savedMeals.push(mealEntry);
+        localStorage.setItem('dailyTotal', JSON.stringify(dailyTotal));
+        localStorage.setItem('meals', JSON.stringify(savedMeals));
+
+        // Atualiza a UI
         totalProteinas.innerText = dailyTotal.proteinas;
         totalCalorias.innerText = dailyTotal.calorias;
         totalGordura.innerText = dailyTotal.gordura.toFixed(2);
         totalCarboidratos.innerText = dailyTotal.carboidratos;
         totalCusto.innerText = dailyTotal.custo.toFixed(2);
+
+        // Exibe a entrada da refeição
+        const mealDiv = document.createElement("div");
+        mealDiv.innerHTML = `<p style="border: 1px solid var(--tertiary-color); border-radius: 8px; padding: 8px 8px;">
+            <strong style="color: var(--tertiary-color);font-size: 1.2em;">${food}:</strong> 
+            <br>Proteínas: ${proteinas}g, Calorias: ${calorias}kcal, 
+            <br>Gordura: ${gordura}g, Carboidratos: ${carboidratos}g, 
+            <br><i>Custo: R$ ${custo.toFixed(2)}</i></p><br>`;
+        mealSummary.appendChild(mealDiv);
+    });
+
+    resetDayBtn.addEventListener("click", function () {
+        // Zera os totais
+        localStorage.removeItem('dailyTotal');
+        localStorage.removeItem('meals');
+        dailyTotal.proteinas = 0;
+        dailyTotal.calorias = 0;
+        dailyTotal.gordura = 0;
+        dailyTotal.carboidratos = 0;
+        dailyTotal.custo = 0;
+
+        totalProteinas.innerText = dailyTotal.proteinas;
+        totalCalorias.innerText = dailyTotal.calorias;
+        totalGordura.innerText = dailyTotal.gordura.toFixed(2);
+        totalCarboidratos.innerText = dailyTotal.carboidratos;
+        totalCusto.innerText = dailyTotal.custo.toFixed(2);
+        
+        mealSummary.innerHTML = ""; // Limpa o Resumo Diário
     });
 
     // Função para abrir o modal de Dicas de Alimentos
@@ -226,6 +246,7 @@ function initializeDietJS() {
     // Lista de alimentos
     const alimentos = [
         { nome: "Abacate", proteinas: 2, carboidratos: 9, gordura: 15, calorias: 160 },
+        
         { nome: "Arroz Integral", proteinas: 2.6, carboidratos: 23, gordura: 0.9, calorias: 111 },
         { nome: "Atum", proteinas: 23, carboidratos: 0, gordura: 0.5, calorias: 109 },
         { nome: "Aveia", proteinas: 13.2, carboidratos: 68.5, gordura: 7, calorias: 389 },
@@ -300,9 +321,6 @@ function initializeDietJS() {
     });
 }
 
-
-
-// Função que define a lógica do calendario.js para ser executada dinamicamente
 function initializeCalendarioJS() {
     const calendar = document.getElementById('calendar');
     const monthTitle = document.getElementById('month-title');
@@ -314,10 +332,9 @@ function initializeCalendarioJS() {
 
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
-    const selectedDays = {};
-    let currentlySelectedDay = null; // Armazena o dia atualmente selecionado
+    let selectedDays = JSON.parse(localStorage.getItem('selectedDays')) || {};
+    let currentlySelectedDay = null;
 
-    // Função para criar o calendário
     function createCalendar(month, year) {
         calendar.innerHTML = '';
         monthTitle.innerText = `${getMonthName(month)} ${year}`;
@@ -326,13 +343,11 @@ function initializeCalendarioJS() {
         const dayOfWeek = firstDay.getDay();
         const daysInMonth = lastDay.getDate();
 
-        // Preencher os dias em branco antes do primeiro dia do mês
         for (let i = 0; i < dayOfWeek; i++) {
             const emptyDay = document.createElement('div');
             calendar.appendChild(emptyDay);
         }
 
-        // Criar os dias do mês
         for (let day = 1; day <= daysInMonth; day++) {
             const dayElement = document.createElement('div');
             dayElement.className = 'day';
@@ -340,9 +355,18 @@ function initializeCalendarioJS() {
 
             const fullDate = `${day}/${month + 1}/${year}`;
 
-            // Marcar dias registrados com uma cor diferente
             if (selectedDays[fullDate]) {
                 dayElement.classList.add('registered');
+            }
+
+            if (
+                day === new Date().getDate() &&
+                month === new Date().getMonth() &&
+                year === new Date().getFullYear()
+            ) {
+                dayElement.classList.add('selected');
+                currentlySelectedDay = dayElement;
+                displayTrainingsForDay(fullDate);
             }
 
             dayElement.addEventListener('click', function () {
@@ -352,47 +376,45 @@ function initializeCalendarioJS() {
 
                 currentlySelectedDay = dayElement;
                 currentlySelectedDay.classList.add('selected');
-
-                // Exibir o treino registrado, se houver
-                const trainingsForDay = selectedDays[fullDate];
-                if (trainingsForDay) {
-                    registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map(training => `<div>${fullDate}: ${training}</div>`).join('')}`;
-                } else {
-                    registeredTrainingsDiv.innerHTML = '<h3>Nenhum treino registrado para este dia.</h3>';
-                }
+                displayTrainingsForDay(fullDate);
             });
 
             calendar.appendChild(dayElement);
         }
     }
 
-    // Registrar o treino quando o botão for clicado
+    function displayTrainingsForDay(fullDate) {
+        const trainingsForDay = selectedDays[fullDate];
+        if (trainingsForDay) {
+            registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map(training => `<div>${fullDate}: ${training}</div>`).join('')}`;
+        } else {
+            registeredTrainingsDiv.innerHTML = '<h3>Nenhum treino registrado para este dia.</h3>';
+        }
+    }
+
     registerTrainingBtn.addEventListener('click', function () {
         if (currentlySelectedDay) {
             const selectedDay = currentlySelectedDay.innerText;
             const fullDate = `${selectedDay}/${currentMonth + 1}/${currentYear}`;
             const training = trainingSelect.value;
 
-            // Adiciona o treino no dia selecionado
             if (!selectedDays[fullDate]) {
-                selectedDays[fullDate] = []; // Inicializa a lista se não existir
+                selectedDays[fullDate] = [];
             }
-            selectedDays[fullDate].push(training); // Adiciona o treino
+            selectedDays[fullDate].push(training);
 
-            // Atualiza a cor do dia registrado
+            localStorage.setItem('selectedDays', JSON.stringify(selectedDays));
+
             currentlySelectedDay.classList.add('registered');
-            currentlySelectedDay.classList.remove('selected'); // Remove a seleção visual
-            currentlySelectedDay = null; // Limpa a seleção atual
+            currentlySelectedDay.classList.remove('selected');
+            currentlySelectedDay = null;
 
-            // Atualiza a lista de treinos registrados imediatamente
-            const trainingsForDay = selectedDays[fullDate];
-            registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map(t => `<div>${fullDate}: ${t}</div>`).join('')}`;
+            displayTrainingsForDay(fullDate);
         } else {
             alert("Por favor, selecione um dia para registrar o treino.");
         }
     });
 
-    // Função para obter o nome do mês
     function getMonthName(month) {
         const monthNames = [
             'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -401,7 +423,6 @@ function initializeCalendarioJS() {
         return monthNames[month];
     }
 
-    // Navegação entre meses
     prevMonthBtn.addEventListener('click', function () {
         currentMonth--;
         if (currentMonth < 0) {
@@ -420,72 +441,113 @@ function initializeCalendarioJS() {
         createCalendar(currentMonth, currentYear);
     });
 
-    // Inicializa o calendário
     createCalendar(currentMonth, currentYear);
 }
 
-// Função que define a lógica do treinos.js para ser executada dinamicamente
 function initializeTreinosJS() {
-    // Função para remover um exercício
+    const workoutNameInput = document.getElementById("workoutName");
+    const exercisesContainer = document.getElementById("exercisesContainer");
+    const registeredWorkoutsDiv = document.getElementById("registeredWorkouts");
+
     function removeExercise(event) {
         event.target.parentElement.remove();
     }
 
-    // Função para adicionar um novo campo de exercício
-    document.getElementById("addExercise").addEventListener("click", function() {
-        const container = document.getElementById("exercisesContainer");
-        
-        // Cria um novo conjunto de inputs para o exercício com o botão "Remover"
+    document.getElementById("addExercise").addEventListener("click", function () {
         const newExercise = document.createElement("div");
         newExercise.classList.add("exercise-input");
-        
+
         const exerciseInput = `
             <input type="text" placeholder="Nome do exercício" class="exercise-name">
             <input type="number" class="series-reps" placeholder="Séries" min="1">
             <input type="number" class="series-reps" placeholder="Repetições" min="1">
             <button class="remove-exercise">Remover</button>
         `;
-        
-        newExercise.innerHTML = exerciseInput;
-        container.appendChild(newExercise);
 
-        // Adiciona o evento de remover para o botão de remover recém-adicionado
+        newExercise.innerHTML = exerciseInput;
+        exercisesContainer.appendChild(newExercise);
         newExercise.querySelector('.remove-exercise').addEventListener("click", removeExercise);
     });
 
-    // Adiciona a função de remover para o exercício inicial
     document.querySelector('.remove-exercise').addEventListener("click", removeExercise);
 
-    // Função para salvar o treino
-    document.getElementById("saveWorkout").addEventListener("click", function() {
-        const workoutName = document.getElementById("workoutName").value.trim();
+    function saveWorkoutsToLocalStorage() {
+        const workoutList = [];
+        document.querySelectorAll(".training-item").forEach(workout => {
+            workoutList.push(workout.querySelector(".workout-text").textContent);
+        });
+        localStorage.setItem("registeredWorkouts", JSON.stringify(workoutList));
+    }
+
+    function loadWorkoutsFromLocalStorage() {
+        const savedWorkouts = JSON.parse(localStorage.getItem("registeredWorkouts")) || [];
+        savedWorkouts.forEach(workoutText => {
+            addWorkoutToUI(workoutText);
+        });
+    }
+
+    function addWorkoutToUI(workoutText) {
+        const workoutEntry = document.createElement("div");
+        workoutEntry.className = "training-item";
+    
+        // Separar o título do treino e os exercícios
+        const [workoutName, exercisesText] = workoutText.split(":");
+        const exercisesList = exercisesText ? exercisesText.split(", ") : [];
+    
+        // Adiciona o título do treino
+        const workoutTitleSpan = document.createElement("span");
+        workoutTitleSpan.className = "workout-title";
+        workoutTitleSpan.textContent = workoutName.trim();
+        workoutEntry.appendChild(workoutTitleSpan);
+    
+        // Adiciona a lista de exercícios, cada um em uma linha
+        const exercisesContainer = document.createElement("div");
+        exercisesContainer.className = "workout-exercises";
+        exercisesList.forEach(exercise => {
+            const exerciseItem = document.createElement("div");
+            exerciseItem.className = "exercise-item";
+            exerciseItem.textContent = exercise.trim();
+            exercisesContainer.appendChild(exerciseItem);
+        });
+        workoutEntry.appendChild(exercisesContainer);
+    
+        // Adiciona o botão de remoção
+        const removeButton = document.createElement("button");
+        removeButton.className = "remove-training";
+        removeButton.textContent = " Remover ";
+        removeButton.addEventListener("click", function () {
+            workoutEntry.remove();
+            saveWorkoutsToLocalStorage();
+        });
+    
+        workoutEntry.appendChild(removeButton);
+        registeredWorkoutsDiv.appendChild(workoutEntry);
+    }
+
+    document.getElementById("saveWorkout").addEventListener("click", function () {
+        const workoutName = workoutNameInput.value.trim();
         const exercises = Array.from(document.querySelectorAll(".exercise-input")).map((exercise) => {
             const exerciseName = exercise.querySelector(".exercise-name").value.trim();
             const series = exercise.querySelectorAll(".series-reps")[0].value || 0;
             const reps = exercise.querySelectorAll(".series-reps")[1].value || 0;
 
-            // Só retorna o exercício se o nome for preenchido
             if (exerciseName) {
                 return `${exerciseName} - ${series} Séries - ${reps} Repetições`;
             }
             return null;
-        }).filter(exercise => exercise); // Filtra os exercícios com nomes preenchidos
+        }).filter(exercise => exercise);
 
-        // Verifica se o nome do treino ou os exercícios estão vazios
         if (workoutName === "" || exercises.length === 0) {
             alert("Por favor, nomeie seu treino e adicione pelo menos um exercício válido.");
             return;
         }
 
-        // Cria um novo elemento para exibir o treino registrado
-        const workoutEntry = document.createElement("div");
-        workoutEntry.className = "training-item";
-        workoutEntry.textContent = `${workoutName}: ${exercises.join(", ")}`;
-        document.getElementById("registeredWorkouts").appendChild(workoutEntry);
+        const workoutText = `${workoutName}: ${exercises.join(", ")}`;
+        addWorkoutToUI(workoutText);
+        saveWorkoutsToLocalStorage();
 
-        // Limpa os campos após registrar
-        document.getElementById("workoutName").value = "";
-        document.getElementById("exercisesContainer").innerHTML = `
+        workoutNameInput.value = "";
+        exercisesContainer.innerHTML = `
             <div class="exercise-input">
                 <input type="text" placeholder="Nome do exercício" class="exercise-name">
                 <input type="number" class="series-reps" placeholder="Séries" min="1">
@@ -494,14 +556,61 @@ function initializeTreinosJS() {
             </div>
         `;
 
-        // Adiciona o evento de remover para o exercício inicial após resetar
         document.querySelector('.remove-exercise').addEventListener("click", removeExercise);
     });
+
+    loadWorkoutsFromLocalStorage();
 }
 
-// Inicializa a função quando a página é carregada
-window.onload = function() {
-    initializeDietJS();
-    initializeTreinosJS();
-    initializeProfileJS();
-};
+
+// Seu código para carregar o conteúdo da página continua aqui...
+document.addEventListener('DOMContentLoaded', function () {
+    const menuItems = document.querySelectorAll('.navbar a');
+    const content = document.querySelector('.content');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+            // Remove 'active' class from all menu items
+            menuItems.forEach(link => link.classList.remove('active'));
+            // Add 'active' class to the clicked menu item
+            this.classList.add('active');
+            // Obter o nome da página baseado no item clicado
+            let page = this.id; // Use o ID do item como nome do arquivo
+            // Carregar conteúdo do arquivo HTML correspondente
+            fetch(`${page}.html`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    content.innerHTML = data; // Atualiza o conteúdo com o HTML carregado
+                    if (page === 'water') {
+                        initializeWaterJS(); // Chama a função para configurar o comportamento da água
+                    } 
+                    if (page === 'dieta') {
+                        initializeDietJS(); // Chama a função para configurar o comportamento da dieta
+                    } 
+                    if (page === 'calendario') {
+                        initializeCalendarioJS(); // Chama a função para configurar o comportamento do exercício
+                    }
+                    if (page === 'treinos') {
+                        initializeTreinosJS(); // Chama a função para configurar o comportamento do treino
+                    }
+                    if (page === 'perfil') {
+                        initializeProfileJS(); // Chama a função para configurar o comportamento do perfil
+                    }
+                })
+                .catch(error => {
+                    console.error('Houve um problema com a requisição fetch:', error);
+                    content.innerHTML = `<p>Erro ao carregar o conteúdo da página.</p>`;
+                });
+        });
+    });
+
+    // Carregar a página inicial automaticamente
+    const homeItem = document.getElementById("home"); // Obtenha o elemento home
+    homeItem.click(); // Simule um clique no item home
+});

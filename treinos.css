@@ -65,6 +65,8 @@ label {
 }
 
 .remove-exercise {
+    display: block;
+    justify-self: center;
     margin-top: 10px;
     padding: 10px;
     cursor: pointer;
@@ -80,16 +82,21 @@ label {
     background-color: darkred; /* Para um efeito de hover */
 }
 
+.remove-training {
+    background-color: var(--secondary-color);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
 .trainings-list{
     margin: 10px;
     padding: 10px;
-}
-
-.training-item{
-    padding: 10px;
-    border-radius: 5px;
-    margin: 5px;
-    background-color: var(--secondary-color);
 }
 
 #registered-trainings{
@@ -97,4 +104,31 @@ label {
     padding-bottom: 10px;
     padding-top: 3px;
     border-radius: 5px;
+}
+
+.training-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--background-color);
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.workout-title {
+    flex: 1; /* Ocupa a primeira parte da linha */
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.exercise-item{
+    padding: 10px;
+}
+
+.workout-exercises {
+    flex: 2; /* Ocupa a segunda parte da linha */
+    display: flex;
+    flex-direction: column; /* Coloca cada exercício em uma nova linha */
 }
