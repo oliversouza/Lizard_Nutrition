@@ -1,3 +1,55 @@
+// Seu código para carregar o conteúdo da página continua aqui...
+document.addEventListener('DOMContentLoaded', function () {
+    const menuItems = document.querySelectorAll('.navbar a');
+    const content = document.querySelector('.content');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+            // Remove 'active' class from all menu items
+            menuItems.forEach(link => link.classList.remove('active'));
+            // Add 'active' class to the clicked menu item
+            this.classList.add('active');
+            // Obter o nome da página baseado no item clicado
+            let page = this.id; // Use o ID do item como nome do arquivo
+            // Carregar conteúdo do arquivo HTML correspondente
+            fetch(`${page}.html`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    content.innerHTML = data; // Atualiza o conteúdo com o HTML carregado
+                    if (page === 'water') {
+                        initializeWaterJS(); // Chama a função para configurar o comportamento da água
+                    } 
+                    if (page === 'dieta') {
+                        initializeDietJS(); // Chama a função para configurar o comportamento da dieta
+                    } 
+                    if (page === 'calendario') {
+                        initializeCalendarioJS(); // Chama a função para configurar o comportamento do exercício
+                    }
+                    if (page === 'treinos') {
+                        initializeTreinosJS(); // Chama a função para configurar o comportamento do treino
+                    }
+                    if (page === 'perfil') {
+                        initializeProfileJS(); // Chama a função para configurar o comportamento do perfil
+                    }
+                })
+                .catch(error => {
+                    console.error('Houve um problema com a requisição fetch:', error);
+                    content.innerHTML = `<p>Erro ao carregar o conteúdo da página.</p>`;
+                });
+        });
+    });
+
+    // Carregar a página inicial automaticamente
+    const homeItem = document.getElementById("home"); // Obtenha o elemento home
+    homeItem.click(); // Simule um clique no item home
+});
+
 function initializeProfileJS() {
     // Carregar dados do localStorage ao iniciar
     loadData();
@@ -158,15 +210,67 @@ function initializeDietJS() {
 
     // Restaura o resumo diário
     const savedMeals = JSON.parse(localStorage.getItem('meals')) || [];
-    savedMeals.forEach(meal => {
+    savedMeals.forEach((meal, index) => {
         const mealEntry = document.createElement("div");
         mealEntry.innerHTML = `<p style="border: 1px solid var(--tertiary-color); border-radius: 8px; padding: 8px 8px;">
             <strong style="color: var(--tertiary-color);font-size: 1.2em;">${meal.food}:</strong> 
             <br>Proteínas: ${meal.proteinas}g, Calorias: ${meal.calorias}kcal, 
             <br>Gordura: ${meal.gordura}g, Carboidratos: ${meal.carboidratos}g, 
-            <br><i>Custo: R$ ${meal.custo.toFixed(2)}</i></p><br>`;
+            <br><i>Custo: R$ ${meal.custo.toFixed(2)}</i>
+            <button class="remove-btn" data-index="${index}">Remover</button>
+        </p><br>`;
         mealSummary.appendChild(mealEntry);
+
+        // Adiciona a funcionalidade de remoção
+        const removeBtn = mealEntry.querySelector(".remove-btn");
+        removeBtn.addEventListener("click", function () {
+            removeMeal(index, meal);
+        });
     });
+
+    // Função para remover refeição
+    function removeMeal(index, meal) {
+        // Atualiza os totais
+        dailyTotal.proteinas -= meal.proteinas;
+        dailyTotal.calorias -= meal.calorias;
+        dailyTotal.gordura -= meal.gordura;
+        dailyTotal.carboidratos -= meal.carboidratos;
+        dailyTotal.custo -= meal.custo;
+
+        // Remove a refeição do array
+        savedMeals.splice(index, 1);
+
+        // Salva os dados no localStorage
+        localStorage.setItem('dailyTotal', JSON.stringify(dailyTotal));
+        localStorage.setItem('meals', JSON.stringify(savedMeals));
+
+        // Atualiza a UI
+        totalProteinas.innerText = dailyTotal.proteinas;
+        totalCalorias.innerText = dailyTotal.calorias;
+        totalGordura.innerText = dailyTotal.gordura.toFixed(2);
+        totalCarboidratos.innerText = dailyTotal.carboidratos;
+        totalCusto.innerText = dailyTotal.custo.toFixed(2);
+
+        // Atualiza o resumo diário
+        mealSummary.innerHTML = "";
+        savedMeals.forEach((meal, index) => {
+            const mealEntry = document.createElement("div");
+            mealEntry.innerHTML = `<p style="border: 1px solid var(--tertiary-color); border-radius: 8px; padding: 8px 8px;">
+                <strong style="color: var(--tertiary-color);font-size: 1.2em;">${meal.food}:</strong> 
+                <br>Proteínas: ${meal.proteinas}g, Calorias: ${meal.calorias}kcal, 
+                <br>Gordura: ${meal.gordura}g, Carboidratos: ${meal.carboidratos}g, 
+                <br><i>Custo: R$ ${meal.custo.toFixed(2)}</i>
+                <button class="remove-btn" data-index="${index}">Remover</button>
+            </p><br>`;
+            mealSummary.appendChild(mealEntry);
+
+            // Adiciona a funcionalidade de remoção para o novo item
+            const removeBtn = mealEntry.querySelector(".remove-btn");
+            removeBtn.addEventListener("click", function () {
+                removeMeal(index, meal);
+            });
+        });
+    }
 
     addMealBtn.addEventListener("click", function () {
         const food = document.getElementById("food").value.trim();
@@ -215,8 +319,16 @@ function initializeDietJS() {
             <strong style="color: var(--tertiary-color);font-size: 1.2em;">${food}:</strong> 
             <br>Proteínas: ${proteinas}g, Calorias: ${calorias}kcal, 
             <br>Gordura: ${gordura}g, Carboidratos: ${carboidratos}g, 
-            <br><i>Custo: R$ ${custo.toFixed(2)}</i></p><br>`;
+            <br><i>Custo: R$ ${custo.toFixed(2)}</i>
+            <button class="remove-btn" data-index="${savedMeals.length - 1}">Remover</button>
+        </p><br>`;
         mealSummary.appendChild(mealDiv);
+
+        // Adiciona a funcionalidade de remoção para o novo item
+        const removeBtn = mealDiv.querySelector(".remove-btn");
+        removeBtn.addEventListener("click", function () {
+            removeMeal(savedMeals.length - 1, mealEntry);
+        });
     });
 
     resetDayBtn.addEventListener("click", function () {
@@ -243,82 +355,82 @@ function initializeDietJS() {
     const closeModal = document.querySelector(".close");
     const foodList = document.getElementById("foodList");
 
-    // Lista de alimentos
-    const alimentos = [
-        { nome: "Abacate", proteinas: 2, carboidratos: 9, gordura: 15, calorias: 160 },
-        
-        { nome: "Arroz Integral", proteinas: 2.6, carboidratos: 23, gordura: 0.9, calorias: 111 },
-        { nome: "Atum", proteinas: 23, carboidratos: 0, gordura: 0.5, calorias: 109 },
-        { nome: "Aveia", proteinas: 13.2, carboidratos: 68.5, gordura: 7, calorias: 389 },
-        { nome: "Banana", proteinas: 1.3, carboidratos: 27, gordura: 0.3, calorias: 105 },
-        { nome: "Batata Doce", proteinas: 2, carboidratos: 20, gordura: 0.1, calorias: 86 },
-        { nome: "Brócolis", proteinas: 2.8, carboidratos: 7, gordura: 0.4, calorias: 35 },
-        { nome: "Frango", proteinas: 31, carboidratos: 0, gordura: 3.6, calorias: 165 },
-        { nome: "Iogurte Natural", proteinas: 10, carboidratos: 12, gordura: 3.3, calorias: 88 },
-        { nome: "Lentilha", proteinas: 9, carboidratos: 20, gordura: 0.4, calorias: 116 },
-        { nome: "Macarrão Integral", proteinas: 7, carboidratos: 30, gordura: 1.6, calorias: 150 },
-        { nome: "Manga", proteinas: 0.8, carboidratos: 15, gordura: 0.4, calorias: 60 },
-        { nome: "Morango", proteinas: 0.7, carboidratos: 7.7, gordura: 0.3, calorias: 32 },
-        { nome: "Ovo", proteinas: 13, carboidratos: 1, gordura: 10, calorias: 155 },
-        { nome: "Peito de Peru", proteinas: 20.4, carboidratos: 1.2, gordura: 1.3, calorias: 100 },
-        { nome: "Pepino", proteinas: 0.6, carboidratos: 3.6, gordura: 0.1, calorias: 16 },
-        { nome: "Queijo Cottage", proteinas: 11, carboidratos: 3, gordura: 4.3, calorias: 98 },
-        { nome: "Quinoa", proteinas: 4.4, carboidratos: 21, gordura: 1.9, calorias: 120 },
-        { nome: "Salmão", proteinas: 20, carboidratos: 0, gordura: 13, calorias: 206 },
-        { nome: "Tofu", proteinas: 8, carboidratos: 2, gordura: 5, calorias: 76 },
-        { nome: "Uva", proteinas: 0.6, carboidratos: 17, gordura: 0.2, calorias: 69 },
-    ];
+  // Lista de alimentos
+  const alimentos = [
+    { nome: "Abacate", proteinas: 2, carboidratos: 9, gordura: 15, calorias: 160 },
+    
+    { nome: "Arroz Integral", proteinas: 2.6, carboidratos: 23, gordura: 0.9, calorias: 111 },
+    { nome: "Atum", proteinas: 23, carboidratos: 0, gordura: 0.5, calorias: 109 },
+    { nome: "Aveia", proteinas: 13.2, carboidratos: 68.5, gordura: 7, calorias: 389 },
+    { nome: "Banana", proteinas: 1.3, carboidratos: 27, gordura: 0.3, calorias: 105 },
+    { nome: "Batata Doce", proteinas: 2, carboidratos: 20, gordura: 0.1, calorias: 86 },
+    { nome: "Brócolis", proteinas: 2.8, carboidratos: 7, gordura: 0.4, calorias: 35 },
+    { nome: "Frango", proteinas: 31, carboidratos: 0, gordura: 3.6, calorias: 165 },
+    { nome: "Iogurte Natural", proteinas: 10, carboidratos: 12, gordura: 3.3, calorias: 88 },
+    { nome: "Lentilha", proteinas: 9, carboidratos: 20, gordura: 0.4, calorias: 116 },
+    { nome: "Macarrão Integral", proteinas: 7, carboidratos: 30, gordura: 1.6, calorias: 150 },
+    { nome: "Manga", proteinas: 0.8, carboidratos: 15, gordura: 0.4, calorias: 60 },
+    { nome: "Morango", proteinas: 0.7, carboidratos: 7.7, gordura: 0.3, calorias: 32 },
+    { nome: "Ovo", proteinas: 13, carboidratos: 1, gordura: 10, calorias: 155 },
+    { nome: "Peito de Peru", proteinas: 20.4, carboidratos: 1.2, gordura: 1.3, calorias: 100 },
+    { nome: "Pepino", proteinas: 0.6, carboidratos: 3.6, gordura: 0.1, calorias: 16 },
+    { nome: "Queijo Cottage", proteinas: 11, carboidratos: 3, gordura: 4.3, calorias: 98 },
+    { nome: "Quinoa", proteinas: 4.4, carboidratos: 21, gordura: 1.9, calorias: 120 },
+    { nome: "Salmão", proteinas: 20, carboidratos: 0, gordura: 13, calorias: 206 },
+    { nome: "Tofu", proteinas: 8, carboidratos: 2, gordura: 5, calorias: 76 },
+    { nome: "Uva", proteinas: 0.6, carboidratos: 17, gordura: 0.2, calorias: 69 },
+];
 
-    dicasAlimentosBtn.addEventListener("click", function () {
-        foodModal.style.display = "block";
-        foodList.innerHTML = "";
+dicasAlimentosBtn.addEventListener("click", function () {
+    foodModal.style.display = "block";
+    foodList.innerHTML = "";
 
-        alimentos.forEach((alimento) => {
-            const foodItem = document.createElement("div");
-            foodItem.classList.add("food-item");
+    alimentos.forEach((alimento) => {
+        const foodItem = document.createElement("div");
+        foodItem.classList.add("food-item");
 
-            foodItem.innerHTML = `
-                <p><strong>${alimento.nome}</strong></p>
-                <input type="number" class="gramas-input" placeholder="gramas" min="1">
-                <button class="add-btn">ADD</button>
-            `;
+        foodItem.innerHTML = `
+            <p><strong>${alimento.nome}</strong></p>
+            <input type="number" class="gramas-input" placeholder="gramas" min="1">
+            <button class="add-btn">ADD</button>
+        `;
 
-            const gramasInput = foodItem.querySelector(".gramas-input");
-            const addBtn = foodItem.querySelector(".add-btn");
+        const gramasInput = foodItem.querySelector(".gramas-input");
+        const addBtn = foodItem.querySelector(".add-btn");
 
-            gramasInput.addEventListener("input", () => {
-                const gramas = parseFloat(gramasInput.value) || 100;
-                const fator = gramas / 100;
+        gramasInput.addEventListener("input", () => {
+            const gramas = parseFloat(gramasInput.value) || 100;
+            const fator = gramas / 100;
 
-                // Calcula os valores baseados na quantidade de gramas
-                alimento.proteinasAtual = (alimento.proteinas * fator).toFixed(2);
-                alimento.carboidratosAtual = (alimento.carboidratos * fator).toFixed(2);
-                alimento.gorduraAtual = (alimento.gordura * fator).toFixed(2);
-                alimento.caloriasAtual = (alimento.calorias * fator).toFixed(2);
-            });
-
-            addBtn.addEventListener("click", () => {
-                document.getElementById("food").value = alimento.nome;
-                document.getElementById("proteinas").value = alimento.proteinasAtual;
-                document.getElementById("calorias").value = alimento.caloriasAtual;
-                document.getElementById("gordura").value = alimento.gorduraAtual;
-                document.getElementById("carboidratos").value = alimento.carboidratosAtual;
-                foodModal.style.display = "none";
-            });
-
-            foodList.appendChild(foodItem);
+            // Calcula os valores baseados na quantidade de gramas
+            alimento.proteinasAtual = (alimento.proteinas * fator).toFixed(2);
+            alimento.carboidratosAtual = (alimento.carboidratos * fator).toFixed(2);
+            alimento.gorduraAtual = (alimento.gordura * fator).toFixed(2);
+            alimento.caloriasAtual = (alimento.calorias * fator).toFixed(2);
         });
-    });
 
-    closeModal.addEventListener("click", function () {
-        foodModal.style.display = "none";
-    });
-
-    window.addEventListener("click", function (event) {
-        if (event.target === foodModal) {
+        addBtn.addEventListener("click", () => {
+            document.getElementById("food").value = alimento.nome;
+            document.getElementById("proteinas").value = alimento.proteinasAtual;
+            document.getElementById("calorias").value = alimento.caloriasAtual;
+            document.getElementById("gordura").value = alimento.gorduraAtual;
+            document.getElementById("carboidratos").value = alimento.carboidratosAtual;
             foodModal.style.display = "none";
-        }
+        });
+
+        foodList.appendChild(foodItem);
     });
+});
+
+closeModal.addEventListener("click", function () {
+    foodModal.style.display = "none";
+});
+
+window.addEventListener("click", function (event) {
+    if (event.target === foodModal) {
+        foodModal.style.display = "none";
+    }
+});
 }
 
 function initializeCalendarioJS() {
@@ -386,10 +498,30 @@ function initializeCalendarioJS() {
     function displayTrainingsForDay(fullDate) {
         const trainingsForDay = selectedDays[fullDate];
         if (trainingsForDay) {
-            registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map(training => `<div>${fullDate}: ${training}</div>`).join('')}`;
+            registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map((training, index) => `
+                <div>
+                    ${fullDate}: ${training} 
+                    <button onclick="removeTraining('${fullDate}', ${index})">Remover</button>
+                </div>`).join('')}`;
         } else {
             registeredTrainingsDiv.innerHTML = '<h3>Nenhum treino registrado para este dia.</h3>';
         }
+    }
+
+    function removeTraining(fullDate, index) {
+        // Remover treino do array
+        selectedDays[fullDate].splice(index, 1);
+
+        // Se não houver mais treinos para esse dia, removê-lo do objeto
+        if (selectedDays[fullDate].length === 0) {
+            delete selectedDays[fullDate];
+        }
+
+        // Atualizar o localStorage
+        localStorage.setItem('selectedDays', JSON.stringify(selectedDays));
+
+        // Atualizar o calendário
+        createCalendar(currentMonth, currentYear);
     }
 
     registerTrainingBtn.addEventListener('click', function () {
@@ -563,54 +695,3 @@ function initializeTreinosJS() {
 }
 
 
-// Seu código para carregar o conteúdo da página continua aqui...
-document.addEventListener('DOMContentLoaded', function () {
-    const menuItems = document.querySelectorAll('.navbar a');
-    const content = document.querySelector('.content');
-
-    menuItems.forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
-            // Remove 'active' class from all menu items
-            menuItems.forEach(link => link.classList.remove('active'));
-            // Add 'active' class to the clicked menu item
-            this.classList.add('active');
-            // Obter o nome da página baseado no item clicado
-            let page = this.id; // Use o ID do item como nome do arquivo
-            // Carregar conteúdo do arquivo HTML correspondente
-            fetch(`${page}.html`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    content.innerHTML = data; // Atualiza o conteúdo com o HTML carregado
-                    if (page === 'water') {
-                        initializeWaterJS(); // Chama a função para configurar o comportamento da água
-                    } 
-                    if (page === 'dieta') {
-                        initializeDietJS(); // Chama a função para configurar o comportamento da dieta
-                    } 
-                    if (page === 'calendario') {
-                        initializeCalendarioJS(); // Chama a função para configurar o comportamento do exercício
-                    }
-                    if (page === 'treinos') {
-                        initializeTreinosJS(); // Chama a função para configurar o comportamento do treino
-                    }
-                    if (page === 'perfil') {
-                        initializeProfileJS(); // Chama a função para configurar o comportamento do perfil
-                    }
-                })
-                .catch(error => {
-                    console.error('Houve um problema com a requisição fetch:', error);
-                    content.innerHTML = `<p>Erro ao carregar o conteúdo da página.</p>`;
-                });
-        });
-    });
-
-    // Carregar a página inicial automaticamente
-    const homeItem = document.getElementById("home"); // Obtenha o elemento home
-    homeItem.click(); // Simule um clique no item home
-});
