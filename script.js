@@ -217,7 +217,7 @@ function initializeDietJS() {
             <br>Proteínas: ${meal.proteinas}g, Calorias: ${meal.calorias}kcal, 
             <br>Gordura: ${meal.gordura}g, Carboidratos: ${meal.carboidratos}g, 
             <br><i>Custo: R$ ${meal.custo.toFixed(2)}</i>
-            <button class="remove-btn" data-index="${index}">Remover</button>
+            <br><button class="remove-btn" data-index="${index}">Remover</button>
         </p><br>`;
         mealSummary.appendChild(mealEntry);
 
