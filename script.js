@@ -498,30 +498,10 @@ function initializeCalendarioJS() {
     function displayTrainingsForDay(fullDate) {
         const trainingsForDay = selectedDays[fullDate];
         if (trainingsForDay) {
-            registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map((training, index) => `
-                <div>
-                    ${fullDate}: ${training} 
-                    <button onclick="removeTraining('${fullDate}', ${index})">Remover</button>
-                </div>`).join('')}`;
+            registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map(training => `<div>${fullDate}: ${training}</div>`).join('')}`;
         } else {
             registeredTrainingsDiv.innerHTML = '<h3>Nenhum treino registrado para este dia.</h3>';
         }
-    }
-
-    function removeTraining(fullDate, index) {
-        // Remover treino do array
-        selectedDays[fullDate].splice(index, 1);
-
-        // Se não houver mais treinos para esse dia, removê-lo do objeto
-        if (selectedDays[fullDate].length === 0) {
-            delete selectedDays[fullDate];
-        }
-
-        // Atualizar o localStorage
-        localStorage.setItem('selectedDays', JSON.stringify(selectedDays));
-
-        // Atualizar o calendário
-        createCalendar(currentMonth, currentYear);
     }
 
     registerTrainingBtn.addEventListener('click', function () {
