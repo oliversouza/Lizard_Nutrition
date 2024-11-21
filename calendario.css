@@ -3,7 +3,9 @@
     flex-direction: column;
     align-items: center;
 }
-#prev-month, #next-month{
+
+#prev-month,
+#next-month {
     background-color: #648a64;
 }
 
@@ -28,7 +30,8 @@
     width: 80%;
     background-color: var(--background-color);
     border-radius: 10px;
-    margin: 10px auto; /* Centraliza horizontalmente */
+    margin: 10px auto;
+    /* Centraliza horizontalmente */
     padding: 5px 10px 20px 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
 }
@@ -42,28 +45,30 @@
 }
 
 .day.selected {
-    background-color: #46685b; /* Cor do dia sendo selecionado */
+    background-color: #46685b;
+    /* Cor do dia sendo selecionado */
     color: white;
 }
 
 .day.registered {
-    background-color: #648a64; /* Cor para dias registrados */
+    background-color: #648a64;
+    /* Cor para dias registrados */
     color: black;
 }
 
-#training-log{
+#training-log {
     margin-top: 15px;
 
 }
 
-#training-log > * {
+#training-log>* {
     margin-top: 5px;
     text-align: center;
     margin-bottom: 5px;
 }
 
-#training-select{
-padding: 10px 20px;
+#training-select {
+    padding: 10px 20px;
     margin: 5px;
     width: 200px;
     border: 2px solid var(--tertiary-color);
@@ -72,6 +77,36 @@ padding: 10px 20px;
     color: rgb(255, 255, 255);
 }
 
-.day.registered.selected{
-    background-color: #a6b985; /* Cor para dias registrados */
+.day.registered.selected {
+    background-color: #a6b985;
+    /* Cor para dias registrados */
+}
+
+.list-calendar {
+    display: flex;
+    align-items: center;
+    /* Alinha verticalmente os itens no centro */
+    justify-content: space-between;
+    /* Espalha os itens horizontalmente, deixando o máximo de espaço entre a data e o botão */
+    margin-bottom: 15px;
+    /* Espaço entre os itens */
+    padding: 5px 0;
+    /* Espaçamento interno */
+    border-bottom: 1px solid #ddd;
+    /* Linha separadora (opcional) */
+    height: 40px;
+    /* Altura fixa para alinhar todos os itens na mesma altura */
+}
+
+.list-calendar button {
+    margin-left: 10px;
+    /* Espaçamento entre a data e o botão */
+    margin-right: 30px;
+    padding: 5px 10px;
+}
+
+.list-calendar p {
+    margin-left: 30px;
+    /* Espaçamento entre a data e o botão */
+    margin-right: 10px;
 }

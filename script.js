@@ -497,11 +497,72 @@ function initializeCalendarioJS() {
 
     function displayTrainingsForDay(fullDate) {
         const trainingsForDay = selectedDays[fullDate];
+        
+        // Função para mapear treino a ícone
+        const getIconForTraining = (training) => {
+            switch (training) {
+                case 'Antebraço':
+                    return 'fas fa-dumbbell'; // Ícone para antebraço
+                case 'Biceps':
+                    return 'fas fa-dumbbell'; // Ícone para bíceps
+                case 'Triceps':
+                    return 'fas fa-dumbbell'; // Ícone para tríceps
+                case 'Peito':
+                    return 'fas fa-dumbbell'; // Ícone para peito
+                case 'Costas':
+                    return 'fas fa-dumbbell'; // Ícone para costas
+                case 'Pernas':
+                    return 'fas fa-dumbbell'; // Ícone para pernas
+                case 'Ombros':
+                    return 'fas fa-dumbbell'; // Ícone para ombros
+                case 'Natação':
+                    return 'fas fa-swimmer'; // Ícone para natação
+                case 'Corrida':
+                    return 'fas fa-running'; // Ícone para corrida
+                case 'Pedal':
+                    return 'fas fa-bicycle'; // Ícone para pedal
+                default:
+                    return 'fas fa-question-circle'; // Ícone padrão para treinos não especificados
+            }
+        };
+    
         if (trainingsForDay) {
-            registeredTrainingsDiv.innerHTML = `<h3>Treinos Registrados:</h3>${trainingsForDay.map(training => `<div>${fullDate}: ${training}</div>`).join('')}`;
+            registeredTrainingsDiv.innerHTML = `
+                <h3>Treinos Registrados:</h3>
+                ${trainingsForDay.map((training, index) => `
+                    <div class="list-calendar">
+                        <p><i class="${getIconForTraining(training)}"></i> ${fullDate}: ${training}</p>
+                        <button class="remove-training" data-date="${fullDate}" data-index="${index}">Remover</button>
+                    </div>
+                `).join('')}
+            `;
+            
+            // Adicionar o evento de clique para o botão de remoção
+            document.querySelectorAll('.remove-training').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    const date = event.target.getAttribute('data-date');
+                    const index = event.target.getAttribute('data-index');
+                    removeTraining(date, index);
+                });
+            });
         } else {
             registeredTrainingsDiv.innerHTML = '<h3>Nenhum treino registrado para este dia.</h3>';
         }
+    }
+    
+    function removeTraining(date, index) {
+        // Remover treino do localStorage
+        selectedDays[date].splice(index, 1);
+        if (selectedDays[date].length === 0) {
+            delete selectedDays[date]; // Se não houver mais treinos, remove a data
+        }
+        localStorage.setItem('selectedDays', JSON.stringify(selectedDays));
+
+        // Atualizar o calendário
+        createCalendar(currentMonth, currentYear);
+
+        // Reexibir os treinos para o dia selecionado
+        displayTrainingsForDay(date);
     }
 
     registerTrainingBtn.addEventListener('click', function () {
@@ -555,6 +616,7 @@ function initializeCalendarioJS() {
 
     createCalendar(currentMonth, currentYear);
 }
+
 
 function initializeTreinosJS() {
     const workoutNameInput = document.getElementById("workoutName");
